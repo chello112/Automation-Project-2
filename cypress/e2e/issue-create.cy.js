@@ -3,6 +3,101 @@
 
 const { faker } = require("@faker-js/faker");
 
+// Selectors
+const selectors = {
+  modal: '[data-testid="modal:issue-create"]',
+  titleInput: 'input[name="title"]',
+  descriptionInput: ".ql-editor",
+  createButton: 'button[type="submit"]',
+  successMessage: "Issue has been successfully created.",
+
+  backlogList: '[data-testid="board-list:backlog"]',
+  listIssue: '[data-testid="list-issue"]',
+
+  issueTypeDropdown: '[data-testid="select:type"]',
+  issueTypeOptions: {
+    Task: '[data-testid="select-option:Task"]',
+    Bug: '[data-testid="select-option:Bug"]',
+    Story: '[data-testid="select-option:Story"]',
+  },
+  issueTypeIcons: {
+    TaskIcon: '[data-testid="icon:task"]',
+    BugIcon: '[data-testid="icon:bug"]',
+    StoryIcon: '[data-testid="icon:story"]',
+  },
+  reporterDropdown: '[data-testid="select:reporterId"]',
+  reporterOptions: {
+    LordGaben: '[data-testid="avatar:Lord Gaben"]',
+    PickleRick: '[data-testid="select-option:Pickle Rick"]',
+    BabyYoda: '[data-testid="avatar:Baby Yoda"]',
+  },
+  reporterImages: {
+    LordGabenImg: '[data-testid="avatar:Lord Gaben"]',
+    PickleRickImg: '[data-testid="avatar:Pickle Rick"]',
+    BabyYodaImg: '[data-testid="avatar:Baby Yoda"]',
+  },
+  assigneesDropdown: '[data-testid="select:userIds"]',
+  assigneeOptions: {
+    LordG: '[data-testid="avatar:Lord Gaben"]',
+    PickleR: '[data-testid="select-option:Pickle Rick"]',
+    BabyY: '[data-testid="avatar:Baby Yoda"]',
+  },
+  assigneeImages: {
+    LordGabenImg: '[data-testid="avatar:Lord Gaben"]',
+    PickleRickImg: '[data-testid="avatar:Pickle Rick"]',
+    BabyYodaImg: '[data-testid="avatar:Baby Yoda"]',
+  },
+  priorityDropdown: '[data-testid="select:priority"]',
+  priorityOptions: {
+    Highest: '[data-testid="select-option:Highest"]',
+    High: '[data-testid="select-option:High"]',
+    Low: '[data-testid="select-option:Low"]',
+    Lowest: '[data-testid="select-option:Lowest"]',
+  },
+  priorityIcons: {
+    HighestIcon: '[data-testid="icon:arrow-up"]',
+    HighIcon: '[data-testid="icon:arrow-up"]',
+    LowIcon: '[data-testid="icon:arrow-down"]',
+    LowestIcon: '[data-testid="icon:arrow-down"]',
+  },
+};
+
+// Arrow function to fulfill all fields and submit the issue
+const fulfillAllFieldsAndSubmitIssue = (title, description, issueType, priority, reporter) => {
+  cy.get(selectors.issueTypeDropdown).then(($dropdown) => {
+    const currentValue = $dropdown.text().trim();
+
+    // Check if the current value is not the same as the issueType
+    if (currentValue !== issueType) {
+      cy.get(selectors.issueTypeDropdown).click();
+      // Ensure the dropdown options are visible and interactable before selecting
+      cy.get(selectors.issueTypeOptions[issueType], { timeout: 10000 }).should("be.visible").click();
+    }
+  });
+  cy.wait(500); // These execution pauses are added because the system sometimes leaves some fields empty
+
+  cy.get(selectors.titleInput).type(title);
+  cy.get(selectors.titleInput).should("not.have.value", "");
+  cy.wait(500);
+
+  cy.get(selectors.descriptionInput).type(description);
+  cy.get(selectors.descriptionInput).should("not.have.text", "");
+  cy.wait(500);
+
+  cy.get(selectors.reporterDropdown).click();
+  cy.get(selectors.reporterOptions[reporter]).trigger("click");
+  cy.get(selectors.reporterImages[`${reporter}Img`]).should("be.visible");
+  cy.wait(500);
+
+  cy.get(selectors.priorityDropdown).click();
+  cy.get(selectors.priorityOptions[priority]).trigger("click");
+  cy.get(selectors.priorityIcons[`${priority}Icon`]).should("be.visible");
+  cy.wait(500);
+
+  cy.get(selectors.createButton).click();
+};
+
+// Test suite
 describe("Issue create", () => {
   beforeEach(() => {
     cy.visit("/");
@@ -12,100 +107,6 @@ describe("Issue create", () => {
         cy.visit(url + "/board?modal-issue-create=true");
       });
   });
-
-  // Selectors
-  const selectors = {
-    modal: '[data-testid="modal:issue-create"]',
-    titleInput: 'input[name="title"]',
-    descriptionInput: ".ql-editor",
-    createButton: 'button[type="submit"]',
-    successMessage: "Issue has been successfully created.",
-
-    backlogList: '[data-testid="board-list:backlog"]',
-    listIssue: '[data-testid="list-issue"]',
-
-    issueTypeDropdown: '[data-testid="select:type"]',
-    issueTypeOptions: {
-      Task: '[data-testid="select-option:Task"]',
-      Bug: '[data-testid="select-option:Bug"]',
-      Story: '[data-testid="select-option:Story"]',
-    },
-    issueTypeIcons: {
-      TaskIcon: '[data-testid="icon:task"]',
-      BugIcon: '[data-testid="icon:bug"]',
-      StoryIcon: '[data-testid="icon:story"]',
-    },
-    reporterDropdown: '[data-testid="select:reporterId"]',
-    reporterOptions: {
-      LordGaben: '[data-testid="avatar:Lord Gaben"]',
-      PickleRick: '[data-testid="select-option:Pickle Rick"]',
-      BabyYoda: '[data-testid="avatar:Baby Yoda"]',
-    },
-    reporterImages: {
-      LordGabenImg: '[data-testid="avatar:Lord Gaben"]',
-      PickleRickImg: '[data-testid="avatar:Pickle Rick"]',
-      BabyYodaImg: '[data-testid="avatar:Baby Yoda"]',
-    },
-    assigneesDropdown: '[data-testid="select:userIds"]',
-    assigneeOptions: {
-      LordG: '[data-testid="avatar:Lord Gaben"]',
-      PickleR: '[data-testid="select-option:Pickle Rick"]',
-      BabyY: '[data-testid="avatar:Baby Yoda"]',
-    },
-    assigneeImages: {
-      LordGabenImg: '[data-testid="avatar:Lord Gaben"]',
-      PickleRickImg: '[data-testid="avatar:Pickle Rick"]',
-      BabyYodaImg: '[data-testid="avatar:Baby Yoda"]',
-    },
-    priorityDropdown: '[data-testid="select:priority"]',
-    priorityOptions: {
-      Highest: '[data-testid="select-option:Highest"]',
-      High: '[data-testid="select-option:High"]',
-      Low: '[data-testid="select-option:Low"]',
-      Lowest: '[data-testid="select-option:Lowest"]',
-    },
-    priorityIcons: {
-      HighestIcon: '[data-testid="icon:arrow-up"]',
-      HighIcon: '[data-testid="icon:arrow-up"]',
-      LowIcon: '[data-testid="icon:arrow-down"]',
-      LowestIcon: '[data-testid="icon:arrow-down"]',
-    },
-  };
-
-  // Arrow function to fulfill all fields and submit the issue
-  const fulfillAllFieldsAndSubmitIssue = (title, description, issueType, priority, reporter) => {
-    cy.get(selectors.issueTypeDropdown).then(($dropdown) => {
-      const currentValue = $dropdown.text().trim();
-
-      // Check if the current value is not the same as the issueType
-      if (currentValue !== issueType) {
-        cy.get(selectors.issueTypeDropdown).click();
-        // Ensure the dropdown options are visible and interactable before selecting
-        cy.get(selectors.issueTypeOptions[issueType], { timeout: 10000 }).should("be.visible").click();
-      }
-    });
-    cy.wait(500); // These execution pauses are added because the system sometimes leaves some fields empty
-
-    cy.get(selectors.titleInput).type(title);
-    cy.get(selectors.titleInput).should("not.have.value", "");
-    cy.wait(500);
-
-    cy.get(selectors.descriptionInput).type(description);
-    cy.get(selectors.descriptionInput).should("not.have.text", "");
-    cy.wait(500);
-
-    cy.get(selectors.reporterDropdown).click();
-    cy.get(selectors.reporterOptions[reporter]).trigger("click");
-    cy.get(selectors.reporterImages[`${reporter}Img`]).should("be.visible");
-    cy.wait(500);
-
-    cy.get(selectors.priorityDropdown).click();
-    cy.get(selectors.priorityOptions[priority]).trigger("click");
-    cy.get(selectors.priorityIcons[`${priority}Icon`]).should("be.visible");
-    cy.wait(500);
-
-    cy.get(selectors.createButton).click();
-  };
 
   /*** Test Case 1: Custom Issue Creation ***/
   it("Should create a custom issue with static data", () => {
