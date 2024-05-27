@@ -16,13 +16,13 @@ describe("Issue delete", () => {
   it("Should delete issue successfully", () => {
     IssueModal.clickDeleteButton();
     IssueModal.confirmDeletion();
-    IssueModal.ensureIssueIsNotVisibleOnBoard(issueTitle);
+    IssueModal.ensureIssueIsNotVisibleOnBoard(issueTitle, false);
   });
 
   it("Should cancel deletion process successfully", () => {
     IssueModal.clickDeleteButton();
     IssueModal.cancelDeletion();
     IssueModal.closeDetailModal();
-    IssueModal.validateIssueVisibilityState(issueTitle);
+    IssueModal.validateIssueVisibilityState(issueTitle, true);
   });
 });
