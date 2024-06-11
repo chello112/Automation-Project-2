@@ -1,5 +1,5 @@
 import IssueDetailsModal from "../../pages/issueDetailsModal";
-const { faker } = require("@faker-js/faker");
+import { faker } from "@faker-js/faker";
 
 describe("Issue comments creating, editing and deleting", () => {
   beforeEach(() => {

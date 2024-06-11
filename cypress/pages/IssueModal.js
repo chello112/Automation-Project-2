@@ -43,6 +43,7 @@ class IssueModal {
   }
 
   createIssue(issueDetails) {
+    cy.wait(6000);
     this.getIssueModal().within(() => {
       this.selectIssueType(issueDetails.type);
       this.editDescription(issueDetails.description);
@@ -55,6 +56,7 @@ class IssueModal {
   ensureIssueIsCreated(expectedAmountIssues, issueDetails) {
     cy.get(this.issueModal).should("not.exist");
     cy.reload();
+    cy.wait(6000);
     cy.contains("Issue has been successfully created.").should("not.exist");
 
     cy.get(this.backlogList)

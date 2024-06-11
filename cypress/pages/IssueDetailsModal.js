@@ -8,7 +8,7 @@ class IssueDetailsModal {
     this.commentSelector = '[data-testid="issue-comment"]';
     this.editButtonSelector = "Edit";
     this.deleteButtonSelector = "Delete";
-    this.confirmDelegteButtonSelector = "button:contains('Delete comment')";
+    this.confirmDeleteButtonSelector = "button:contains('Delete comment')";
     this.commentEditTextareaSelector = '[data-testid="comment-edit-textarea"]';
     this.confirmModalSelector = '[data-testid="modal:confirm"]';
   }
@@ -49,7 +49,6 @@ class IssueDetailsModal {
         .contains(this.editButtonSelector)
         .click()
         .should("not.exist");
-
       cy.get(this.commentTextArea).should("contain", comment).clear().type(newComment);
       cy.get(this.saveButtonSelector).click().should("not.exist");
       this.getCommentsList().should("have.length", "2").first().find("p").contains(newComment);
@@ -62,7 +61,7 @@ class IssueDetailsModal {
       .should("contain", newComment)
       .contains(this.deleteButtonSelector)
       .click();
-    this.getConfirmationModal().find(this.confirmDelegteButtonSelector).click().should("not.exist");
+    this.getConfirmationModal().find(this.confirmDeleteButtonSelector).click().should("not.exist");
     this.getCommentsList().should("have.length", "1");
     this.getIssueDetailsModal().should("not.contain", this.addNewComment);
   }

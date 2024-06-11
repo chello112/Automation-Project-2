@@ -1,7 +1,6 @@
 /***  I HIGHLY RECOMMEND TESTING THE TEST CASES ONE BY ONE USING `it.only`.
   RUNNING ALL THE TESTS SIMULTANEOUSLY MAY CAUSE THEM TO FAIL FOR UNKNOWN REASONS ***/
-
-const { faker } = require("@faker-js/faker");
+import { faker } from "@faker-js/faker";
 
 // Selectors
 const selectors = {
