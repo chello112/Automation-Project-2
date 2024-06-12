@@ -1,5 +1,6 @@
 class IssueTimeTracking {
   constructor() {
+    this.issueDetailsModal = '[data-testid="modal:issue-details"]';
     this.stopwatchIcon = '[data-testid="icon:stopwatch"]';
     this.estimationInput = 'input[placeholder="Number"]';
     this.backlogList = '[data-testid="board-list:backlog"]';
@@ -9,7 +10,7 @@ class IssueTimeTracking {
   }
 
   getIssueDetailModal() {
-    return cy.get(this.issueDetailModalSelector);
+    return cy.get(this.issueDetailsModal);
   }
 
   getCloseModalButton() {
@@ -31,13 +32,17 @@ class IssueTimeTracking {
   }
 
   addTimeEstimation(timeEstimationInHours) {
-    this.getEstimationInput().click().clear().type(timeEstimationInHours).should("have.value", timeEstimationInHours);
+    this.getIssueDetailModal().within(() => {
+      this.getEstimationInput().click().clear().type(timeEstimationInHours).should("have.value", timeEstimationInHours);
+    });
   }
 
   verifyEstimatedTime(timeEstimationInHours) {
-    cy.get(this.stopwatchIcon)
-      .next()
-      .contains(timeEstimationInHours + "h estimated");
+    this.getIssueDetailModal().within(() => {
+      cy.get(this.stopwatchIcon)
+        .next()
+        .contains(timeEstimationInHours + "h estimated");
+    });
   }
 
   editTimeEstimation(timeSpentInHours, timeRemainingInHours) {
