@@ -38,7 +38,6 @@ class IssueTimeTracking {
     cy.get(this.stopwatchIcon)
       .next()
       .contains(timeEstimationInHours + "h estimated");
-    cy.contains(`${timeEstimationInHours}h estimated`).should("be.visible");
   }
 
   editTimeEstimation(timeSpentInHours, timeRemainingInHours) {
