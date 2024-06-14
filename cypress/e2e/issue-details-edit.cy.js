@@ -54,11 +54,35 @@ describe("Issue details editing", () => {
     });
   });
 
-  it.only("Should check the dropdown priority", () => {
+  it("Should check the dropdown priority", () => {
     const expectedLength = 5;
+    const expectedPriorities = ["Lowest", "Low", "Medium", "High", "Highest"];
+    let priorities = [];
 
     getIssueDetailsModal().within(() => {
-      cy.get(priorityDropdownSelector).click();
+      cy.get(priorityDropdownSelector).then((currentlySelected) => {
+        priorities.push(currentlySelected.text().trim());
+        cy.get(priorityDropdownSelector).click();
+        cy.get('[data-testid^="select-option"]')
+          .each((option) => {
+            priorities.push(option.text().trim());
+          })
+          .then(() => {
+            expect(priorities).to.have.length(expectedLength);
+            expect(priorities).to.have.members(expectedPriorities);
+          });
+      });
+    });
+  });
+
+  it("Should check that the reporter's name has only characters in it", () => {
+    getIssueDetailsModal().within(() => {
+      cy.get('[data-testid="select:reporter"]')
+        .invoke("text")
+        .then((reporterName) => {
+          const regex = /^[A-Za-z\s]+$/;
+          expect(reporterName.trim()).to.match(regex);
+        });
     });
   });
 
