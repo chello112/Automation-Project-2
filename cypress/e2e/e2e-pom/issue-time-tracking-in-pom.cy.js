@@ -1,14 +1,5 @@
-import IssueModal from "../../pages/IssueModal";
 import IssueTimeTracking from "../../pages/IssueTimeTracking";
 import { faker } from "@faker-js/faker";
-
-const EXPECTED_AMOUNT_OF_ISSUES = "5";
-const issueDetails = {
-  title: faker.lorem.word(),
-  description: faker.lorem.words(10),
-  type: "Bug",
-  assignee: "Lord Gaben",
-};
 
 describe("Issue time tracking", () => {
   beforeEach(() => {
@@ -16,12 +7,8 @@ describe("Issue time tracking", () => {
     cy.url()
       .should("eq", `${Cypress.env("baseUrl")}project/board`)
       .then((url) => {
-        cy.visit(url + "/board?modal-issue-create=true");
-
-        IssueModal.createIssue(issueDetails);
-        IssueModal.ensureIssueIsCreated(EXPECTED_AMOUNT_OF_ISSUES, issueDetails);
-
-        IssueTimeTracking.getRecentlyCreatedIssue(issueDetails);
+        cy.visit(url + "/board");
+        cy.contains(IssueTimeTracking.firstIssueTitle).click();
       });
   });
   const timeEstimationInHours = faker.number.int({ min: 1, max: 100 });
@@ -33,5 +20,9 @@ describe("Issue time tracking", () => {
     IssueTimeTracking.verifyEstimatedTime(timeEstimationInHours);
 
     IssueTimeTracking.editTimeEstimation(timeSpentInHours, timeRemainingInHours);
+    IssueTimeTracking.verifyLoggedAndRemainingTime(timeSpentInHours, timeRemainingInHours, timeRemainingInHours);
+
+    IssueTimeTracking.clearTimeFields();
+    IssueTimeTracking.verifyNoTimeLogged();
   });
 });
